@@ -43,7 +43,7 @@ export function Header({
 }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [_openDropdown, setOpenDropdown] = useState<string | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {

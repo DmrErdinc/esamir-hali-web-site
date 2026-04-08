@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Plus, Pencil, Eye, Trash2, FileText } from "lucide-react";
+import { Plus, Pencil, Eye, FileText } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { AdminBlogActions } from "@/components/admin/AdminBlogActions";

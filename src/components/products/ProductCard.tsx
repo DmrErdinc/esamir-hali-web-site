@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { WhatsAppProductButton } from "@/components/shared/WhatsAppProductButton";
-import { getImageUrl, formatPrice } from "@/lib/utils";
+import { getImageUrl } from "@/lib/utils";
 
 interface Product {
   id: string;

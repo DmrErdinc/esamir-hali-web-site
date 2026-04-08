@@ -8,6 +8,16 @@ export const metadata: Metadata = {
   description: "ESAMIR iletişim bilgileri, konum ve çalışma saatleri.",
 };
 
+interface ContactCard {
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  title: string;
+  value: string;
+  href: string | null;
+  cta: string | null;
+  external?: boolean;
+  color?: string;
+}
+
 export default async function IletisimPage() {
   const settings = await getSettings();
   const s = { ...DEFAULT_SETTINGS, ...settings };
@@ -15,6 +25,40 @@ export default async function IletisimPage() {
   const waUrl = (s.whatsapp || s.phone)
     ? getWhatsAppUrl(s.whatsapp || s.phone || "", "Merhaba, ESAMIR hakkında bilgi almak istiyorum.")
     : "#";
+
+  const contactCards: (ContactCard | false | null)[] = [
+    s.phone ? {
+      icon: Phone,
+      title: "Telefon",
+      value: s.phone,
+      href: `tel:${s.phone}`,
+      cta: "Şimdi Ara",
+    } : false,
+    (s.whatsapp || s.phone) ? {
+      icon: MessageCircle,
+      title: "WhatsApp",
+      value: "Mesaj Gönderin",
+      href: waUrl,
+      cta: "Yazın",
+      external: true,
+      color: "#25D366",
+    } : false,
+    s.email ? {
+      icon: Mail,
+      title: "E-posta",
+      value: s.email,
+      href: `mailto:${s.email}`,
+      cta: "Mail At",
+    } : false,
+    s.address ? {
+      icon: MapPin,
+      title: "Adres",
+      value: s.address,
+      href: s.google_maps_url || null,
+      cta: s.google_maps_url ? "Haritada Gör" : null,
+      external: !!s.google_maps_url,
+    } : false,
+  ];
 
   return (
     <>
@@ -30,41 +74,9 @@ export default async function IletisimPage() {
       <section className="section-padding bg-cream-50">
         <div className="container-brand px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16">
-            {[
-              s.phone && {
-                icon: Phone,
-                title: "Telefon",
-                value: s.phone,
-                href: `tel:${s.phone}`,
-                cta: "Şimdi Ara",
-              },
-              (s.whatsapp || s.phone) && {
-                icon: MessageCircle,
-                title: "WhatsApp",
-                value: "Mesaj Gönderin",
-                href: waUrl,
-                cta: "Yazın",
-                external: true,
-                color: "#25D366",
-              },
-              s.email && {
-                icon: Mail,
-                title: "E-posta",
-                value: s.email,
-                href: `mailto:${s.email}`,
-                cta: "Mail At",
-              },
-              s.address && {
-                icon: MapPin,
-                title: "Adres",
-                value: s.address,
-                href: s.google_maps_url || null,
-                cta: s.google_maps_url ? "Haritada Gör" : null,
-                external: !!s.google_maps_url,
-              },
-            ]
-              .filter(Boolean)
-              .map((c: any) => (
+            {contactCards
+              .filter((c): c is ContactCard => c !== false)
+              .map((c) => (
                 <div key={c.title} className="bg-white p-5 md:p-6 shadow-card flex flex-col">
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-cream-100 flex items-center justify-center mb-3 md:mb-4">
                     <c.icon
@@ -170,7 +182,7 @@ export default async function IletisimPage() {
           )}
 
           {/* Google Review */}
-          {s.google_review_show === "true" && s.google_review_link && (
+          {s.google_review_show === "true" && s.google_review_show_contact === "true" && s.google_review_link && (
             <div className="bg-brand-800 p-6 md:p-10 text-center">
               <div className="flex items-center justify-center gap-1 mb-3 md:mb-4">
                 {[1, 2, 3, 4, 5].map((i) => (

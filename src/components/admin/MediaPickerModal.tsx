@@ -3,6 +3,28 @@ import React, { useState, useEffect, useRef } from "react";
 import { X, Upload, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
+interface MediaAsset {
+  id: string;
+  url: string;
+  filename: string;
+}
+
+interface UploadedFile {
+  url: string;
+  originalName: string;
+  size: number;
+}
+
+interface UploadResponse {
+  success?: boolean;
+  files?: UploadedFile[];
+  error?: string;
+}
+
+interface MediaResponse {
+  assets?: MediaAsset[];
+}
+
 interface MediaPickerModalProps {
   onSelect: (urls: string[]) => void;
   onClose: () => void;
@@ -10,7 +32,7 @@ interface MediaPickerModalProps {
 }
 
 export function MediaPickerModal({ onSelect, onClose, multiple = false }: MediaPickerModalProps) {
-  const [assets, setAssets] = useState<{ id: string; url: string; filename: string }[]>([]);
+  const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -19,7 +41,7 @@ export function MediaPickerModal({ onSelect, onClose, multiple = false }: MediaP
   useEffect(() => {
     fetch("/api/media")
       .then((r) => r.json())
-      .then((d) => {
+      .then((d: MediaResponse) => {
         setAssets(d.assets || []);
         setLoading(false);
       })
@@ -46,9 +68,9 @@ export function MediaPickerModal({ onSelect, onClose, multiple = false }: MediaP
 
     try {
       const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
+      const data: UploadResponse = await res.json();
       if (data.files) {
-        const newAssets = data.files.map((f: any) => ({
+        const newAssets: MediaAsset[] = data.files.map((f) => ({
           id: f.url,
           url: f.url,
           filename: f.originalName,

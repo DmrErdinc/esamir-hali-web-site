@@ -14,7 +14,7 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ user }: AdminHeaderProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const { openMobile } = useSidebar();
+  const { openMobile: _openMobile } = useSidebar();
 
   const initials = (user.name ?? user.email)
     .split(" ")

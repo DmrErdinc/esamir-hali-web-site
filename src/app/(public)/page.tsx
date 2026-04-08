@@ -66,7 +66,7 @@ export default async function HomePage() {
       <FeaturedProducts products={featuredProducts} settings={merged} />
       <InteriorSection settings={merged} />
       <QualitySection />
-      {merged.google_review_show === "true" && merged.google_review_link && (
+      {merged.google_review_show === "true" && merged.google_review_show_home === "true" && merged.google_review_link && (
         <GoogleReviewCTA settings={merged} />
       )}
       <WhatsAppCTA settings={merged} />

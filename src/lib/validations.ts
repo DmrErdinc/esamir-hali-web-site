@@ -46,6 +46,9 @@ export const productSchema = z.object({
   seoTitle: z.string().max(70).optional().nullable(),
   seoDesc: z.string().max(160).optional().nullable(),
   specs: z.record(z.string()).optional().nullable(),
+  trendyolUrl: z.string().url("Geçerli bir URL girin").optional().nullable().or(z.literal("")),
+  hepsiburadaUrl: z.string().url("Geçerli bir URL girin").optional().nullable().or(z.literal("")),
+  shopierUrl: z.string().url("Geçerli bir URL girin").optional().nullable().or(z.literal("")),
 });
 
 // Blog Post

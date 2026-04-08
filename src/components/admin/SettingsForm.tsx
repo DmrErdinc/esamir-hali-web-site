@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useTransition } from "react";
-import { Loader2, Save, Globe, Phone, Share2, MapPin, Star, Search, Layout, AlignLeft, Image as ImageIcon, Megaphone, Paintbrush, Type } from "lucide-react";
+import { Loader2, Save, Globe, Phone, Share2, MapPin, Star, Search, Layout, AlignLeft, Image as ImageIcon, Megaphone, Paintbrush, Type, ShoppingCart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -16,12 +16,14 @@ const TABS = [
   { id: "general", label: "Genel", icon: Globe },
   { id: "contact", label: "İletişim", icon: Phone },
   { id: "social", label: "Sosyal Medya", icon: Share2 },
+  { id: "ecommerce", label: "E-Ticaret Platformları", icon: ShoppingCart },
   { id: "location", label: "Konum", icon: MapPin },
   { id: "review", label: "Google Değerlendirme", icon: Star },
   { id: "seo", label: "SEO", icon: Search },
   { id: "appearance", label: "Görünüm", icon: Type },
   { id: "header", label: "Header", icon: Layout },
   { id: "hero", label: "Hero Bölümü", icon: Megaphone },
+  { id: "blog", label: "Blog", icon: AlignLeft },
   { id: "about", label: "Hakkımızda Sayfası", icon: AlignLeft },
   { id: "footer", label: "Footer", icon: AlignLeft },
   { id: "interior", label: "İç Mimarlık (Ana Sayfa)", icon: Paintbrush },
@@ -201,6 +203,28 @@ export function SettingsForm({ settings: initialSettings }: SettingsFormProps) {
           </Section>
         )}
 
+        {activeTab === "ecommerce" && (
+          <Section title="E-Ticaret Platform Linkleri">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-blue-800">
+                <strong>Not:</strong> Bu linkler footer'da gösterilecektir. Müşterileriniz ürünlerinizi bu platformlardan da satın alabilir.
+              </p>
+            </div>
+            <Field label="Trendyol Mağaza Linki" hint="Ana mağaza sayfanızın linki">
+              <Input type="url" value={s.ecommerce_trendyol_url || ""} onChange={(e) => set("ecommerce_trendyol_url", e.target.value)} placeholder="https://www.trendyol.com/magaza/..." />
+            </Field>
+            <Field label="Hepsiburada Mağaza Linki" hint="Ana mağaza sayfanızın linki">
+              <Input type="url" value={s.ecommerce_hepsiburada_url || ""} onChange={(e) => set("ecommerce_hepsiburada_url", e.target.value)} placeholder="https://www.hepsiburada.com/magaza/..." />
+            </Field>
+            <Field label="Shopier Mağaza Linki" hint="Ana mağaza sayfanızın linki">
+              <Input type="url" value={s.ecommerce_shopier_url || ""} onChange={(e) => set("ecommerce_shopier_url", e.target.value)} placeholder="https://www.shopier.com/..." />
+            </Field>
+            <div className="pt-2">
+              <Toggle checked={bool("ecommerce_show_in_footer")} onChange={(v) => setBool("ecommerce_show_in_footer", v)} label="Footer'da göster" />
+            </div>
+          </Section>
+        )}
+
         {activeTab === "location" && (
           <>
             <Section title="Google Maps">
@@ -335,6 +359,12 @@ export function SettingsForm({ settings: initialSettings }: SettingsFormProps) {
               <Field label="CTA Linki"><Input value={s.hero_cta_href || ""} onChange={(e) => set("hero_cta_href", e.target.value)} placeholder="/kategoriler" /></Field>
             </Row>
             <ImageField label="Hero Arka Plan Görseli" hint="1920×1080px önerilir" value={s.hero_image || ""} onChange={(v) => set("hero_image", v)} />
+          </Section>
+        )}
+
+        {activeTab === "blog" && (
+          <Section title="Blog Ayarları">
+            <Toggle checked={bool("blog_show_homepage")} onChange={(v) => setBool("blog_show_homepage", v)} label="Ana sayfada blog yazılarını göster" />
           </Section>
         )}
 

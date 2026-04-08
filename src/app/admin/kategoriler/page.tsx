@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Pencil, Trash2, ToggleRight, ToggleLeft, Eye, FolderOpen } from "lucide-react";
+import { Plus, Pencil, Eye, FolderOpen } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getImageUrl } from "@/lib/utils";
 import { AdminCategoryActions } from "@/components/admin/AdminCategoryActions";

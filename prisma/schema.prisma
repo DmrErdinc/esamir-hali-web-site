@@ -50,7 +50,7 @@ model Category {
   isFeatured  Boolean    @default(false)
   promoText   String?    @db.Text
   parentId    String?
-  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children    Category[] @relation("CategoryTree")
   products    Product[]
   createdAt   DateTime   @default(now())
@@ -67,29 +67,33 @@ model Category {
 // ============================================================
 
 model Product {
-  id          String         @id @default(cuid())
-  name        String
-  sku         String?        @unique
-  slug        String         @unique
-  shortDesc   String?        @db.Text
-  description String?        @db.Text
-  categoryId  String?
-  category    Category?      @relation(fields: [categoryId], references: [id])
-  images      ProductImage[]
-  dimensions  String?
-  material    String?
-  color       String?
-  inStock     Boolean        @default(true)
-  price       Decimal?       @db.Decimal(10, 2)
-  showPrice   Boolean        @default(false)
-  isFeatured  Boolean        @default(false)
-  isNew       Boolean        @default(false)
-  isActive    Boolean        @default(true)
-  seoTitle    String?
-  seoDesc     String?        @db.Text
-  specs       Json?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id            String         @id @default(cuid())
+  name          String
+  sku           String?        @unique
+  slug          String         @unique
+  shortDesc     String?        @db.Text
+  description   String?        @db.Text
+  categoryId    String?
+  category      Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  images        ProductImage[]
+  dimensions    String?
+  material      String?
+  color         String?
+  inStock       Boolean        @default(true)
+  price         Decimal?       @db.Decimal(10, 2)
+  showPrice     Boolean        @default(false)
+  isFeatured    Boolean        @default(false)
+  isNew         Boolean        @default(false)
+  isActive      Boolean        @default(true)
+  seoTitle      String?
+  seoDesc       String?        @db.Text
+  specs         Json?
+  // E-commerce platform links
+  trendyolUrl   String?
+  hepsiburadaUrl String?
+  shopierUrl    String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   @@index([slug])
   @@index([categoryId])
@@ -138,7 +142,7 @@ model BlogPost {
   coverImage  String?
   authorName  String?
   categoryId  String?
-  category    BlogCategory? @relation(fields: [categoryId], references: [id])
+  category    BlogCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   isPublished Boolean       @default(false)
   isFeatured  Boolean       @default(false)
   seoTitle    String?
@@ -225,7 +229,7 @@ model ContentBlock {
   order    Int      @default(0)
   isActive Boolean  @default(true)
   pageId   String?
-  page     Page?    @relation(fields: [pageId], references: [id])
+  page     Page?    @relation(fields: [pageId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -246,7 +250,7 @@ model MenuItem {
   target   String?    @default("_self")
   isActive Boolean    @default(true)
   parentId String?
-  parent   MenuItem?  @relation("MenuTree", fields: [parentId], references: [id])
+  parent   MenuItem?  @relation("MenuTree", fields: [parentId], references: [id], onDelete: SetNull)
   children MenuItem[] @relation("MenuTree")
   menuSlot String     @default("header")
   createdAt DateTime  @default(now())

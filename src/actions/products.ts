@@ -10,19 +10,38 @@ export async function createProduct(data: Record<string, unknown>) {
   const parsed = productSchema.safeParse(data);
   if (!parsed.success) return { error: parsed.error.errors[0]?.message };
 
-  const slug = (parsed.data.slug as string) || generateSlug(parsed.data.name as string);
+  const slug = parsed.data.slug || generateSlug(parsed.data.name);
   const existing = await prisma.product.findUnique({ where: { slug } });
   if (existing) return { error: "Bu slug zaten kullanılıyor." };
 
-  const { images, ...rest } = parsed.data as any;
+  const { images, ...rest } = parsed.data;
 
   const product = await prisma.product.create({
     data: {
-      ...rest,
+      name: rest.name,
+      sku: rest.sku || null,
       slug,
+      shortDesc: rest.shortDesc || null,
+      description: rest.description || null,
+      categoryId: rest.categoryId || null,
+      dimensions: rest.dimensions || null,
+      material: rest.material || null,
+      color: rest.color || null,
+      inStock: rest.inStock,
+      price: rest.price || null,
+      showPrice: rest.showPrice,
+      isFeatured: rest.isFeatured,
+      isNew: rest.isNew,
+      isActive: rest.isActive,
+      seoTitle: rest.seoTitle || null,
+      seoDesc: rest.seoDesc || null,
+      specs: rest.specs ?? undefined,
+      trendyolUrl: rest.trendyolUrl || null,
+      hepsiburadaUrl: rest.hepsiburadaUrl || null,
+      shopierUrl: rest.shopierUrl || null,
       images: images?.length
         ? {
-            create: images.map((img: any, i: number) => ({
+            create: images.map((img, i) => ({
               url: img.url,
               alt: img.alt || null,
               order: i,
@@ -44,22 +63,44 @@ export async function updateProduct(id: string, data: Record<string, unknown>) {
   const parsed = productSchema.safeParse(data);
   if (!parsed.success) return { error: parsed.error.errors[0]?.message };
 
-  const slug = (parsed.data.slug as string) || generateSlug(parsed.data.name as string);
+  const slug = parsed.data.slug || generateSlug(parsed.data.name);
   const conflict = await prisma.product.findFirst({ where: { slug, id: { not: id } } });
   if (conflict) return { error: "Bu slug başka bir ürün tarafından kullanılıyor." };
 
-  const { images, ...rest } = parsed.data as any;
+  const { images, ...rest } = parsed.data;
 
   const product = await prisma.product.update({
     where: { id },
-    data: { ...rest, slug },
+    data: {
+      name: rest.name,
+      sku: rest.sku || null,
+      slug,
+      shortDesc: rest.shortDesc || null,
+      description: rest.description || null,
+      categoryId: rest.categoryId || null,
+      dimensions: rest.dimensions || null,
+      material: rest.material || null,
+      color: rest.color || null,
+      inStock: rest.inStock,
+      price: rest.price || null,
+      showPrice: rest.showPrice,
+      isFeatured: rest.isFeatured,
+      isNew: rest.isNew,
+      isActive: rest.isActive,
+      seoTitle: rest.seoTitle || null,
+      seoDesc: rest.seoDesc || null,
+      specs: rest.specs ?? undefined,
+      trendyolUrl: rest.trendyolUrl || null,
+      hepsiburadaUrl: rest.hepsiburadaUrl || null,
+      shopierUrl: rest.shopierUrl || null,
+    },
   });
 
   // Sync images: delete all then recreate from form
   await prisma.productImage.deleteMany({ where: { productId: id } });
   if (images?.length) {
     await prisma.productImage.createMany({
-      data: images.map((img: any, i: number) => ({
+      data: images.map((img, i) => ({
         productId: id,
         url: img.url,
         alt: img.alt || null,

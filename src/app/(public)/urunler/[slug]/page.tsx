@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSettings, DEFAULT_SETTINGS } from "@/lib/settings";
-import { absoluteUrl, getImageUrl, safeJson, formatPrice } from "@/lib/utils";
+import { absoluteUrl, safeJson, formatPrice } from "@/lib/utils";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { ProductGallery } from "@/components/products/ProductGallery";
 import { WhatsAppProductButton } from "@/components/shared/WhatsAppProductButton";
 import { ProductCard } from "@/components/products/ProductCard";
 import { Badge } from "@/components/ui/badge";
-import { Tag, Ruler, Palette, Package } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tag, Ruler, Palette, Package, ExternalLink } from "lucide-react";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -172,6 +173,53 @@ export default async function UrunDetailPage({ params }: Props) {
                   fullWidth
                 />
               </div>
+
+              {/* E-commerce Platform Links */}
+              {(product.trendyolUrl || product.hepsiburadaUrl || product.shopierUrl) && (
+                <div className="border-t border-cream-200 pt-6 mb-6">
+                  <h3 className="text-sm font-sans font-medium text-brand-700 mb-3">
+                    Diğer Platformlardan Alışveriş Yapın
+                  </h3>
+                  <div className="flex flex-col gap-2">
+                    {product.trendyolUrl && (
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full justify-between border-orange-200 hover:bg-orange-50 hover:border-orange-300 text-orange-700"
+                      >
+                        <a href={product.trendyolUrl} target="_blank" rel="noopener noreferrer">
+                          <span className="font-medium">Trendyol&apos;da Gör</span>
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
+                    {product.hepsiburadaUrl && (
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full justify-between border-orange-200 hover:bg-orange-50 hover:border-orange-300 text-orange-600"
+                      >
+                        <a href={product.hepsiburadaUrl} target="_blank" rel="noopener noreferrer">
+                          <span className="font-medium">Hepsiburada&apos;da Gör</span>
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
+                    {product.shopierUrl && (
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="w-full justify-between border-blue-200 hover:bg-blue-50 hover:border-blue-300 text-blue-700"
+                      >
+                        <a href={product.shopierUrl} target="_blank" rel="noopener noreferrer">
+                          <span className="font-medium">Shopier&apos;de Gör</span>
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Description */}
               {product.description && (

@@ -1,10 +1,12 @@
 "use client";
-import React from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import useEmblaCarousel from "embla-carousel-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { getWhatsAppUrl, getProductWhatsAppMessage, getImageUrl, absoluteUrl } from "@/lib/utils";
 import type { Settings } from "@/lib/settings";
 
@@ -30,6 +32,20 @@ export function FeaturedProducts({ products, settings }: FeaturedProductsProps) 
   if (products.length === 0) return null;
 
   const whatsapp = settings.whatsapp || settings.phone || "";
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    loop: false,
+    skipSnaps: false,
+    dragFree: true,
+  });
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   return (
     <section className="section-padding bg-white">
@@ -45,25 +61,53 @@ export function FeaturedProducts({ products, settings }: FeaturedProductsProps) 
           </p>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
-          {products.map((product, i) => {
-            const coverImage = product.images[0]?.url
-              ? getImageUrl(product.images[0].url)
-              : null;
-            const productUrl = absoluteUrl(`/urunler/${product.slug}`);
-            const waMessage = getProductWhatsAppMessage(product.name, productUrl);
-            const waUrl = whatsapp ? getWhatsAppUrl(whatsapp, waMessage) : "#";
-
-            return (
-              <motion.div
-                key={product.id}
-                className="card-product group"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-30px" }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
+        {/* Carousel Container */}
+        <div className="relative group">
+          {/* Navigation Buttons */}
+          {products.length > 3 && (
+            <>
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/95 hover:bg-white shadow-xl border-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:flex hover:scale-110"
+                onClick={scrollPrev}
               >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/95 hover:bg-white shadow-xl border-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:flex hover:scale-110"
+                onClick={scrollNext}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </>
+          )}
+
+          {/* Embla Carousel */}
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex gap-3 md:gap-4 lg:gap-6 touch-pan-y">
+              {products.map((product, i) => {
+                const coverImage = product.images[0]?.url
+                  ? getImageUrl(product.images[0].url)
+                  : null;
+                const productUrl = absoluteUrl(`/urunler/${product.slug}`);
+                const waMessage = getProductWhatsAppMessage(product.name, productUrl);
+                const waUrl = whatsapp ? getWhatsAppUrl(whatsapp, waMessage) : "#";
+
+                return (
+                  <div
+                    key={product.id}
+                    className="flex-[0_0_calc(50%-6px)] sm:flex-[0_0_calc(33.333%-8px)] md:flex-[0_0_280px] lg:flex-[0_0_300px] min-w-0"
+                  >
+                    <motion.div
+                      className="card-product group h-full"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-30px" }}
+                      transition={{ duration: 0.4, delay: i * 0.05 }}
+                    >
                 {/* Image */}
                 <div className="relative aspect-[3/4] bg-cream-100 overflow-hidden rounded-sm">
                   {/* Invisible link overlay for the image area */}
@@ -138,9 +182,12 @@ export function FeaturedProducts({ products, settings }: FeaturedProductsProps) 
                     </p>
                   )}
                 </div>
-              </motion.div>
-            );
-          })}
+                    </motion.div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         {/* CTA */}

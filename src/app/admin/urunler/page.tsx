@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Pencil, Trash2, Eye, Star, ToggleLeft, Package } from "lucide-react";
+import { Plus, Pencil, Eye, Package } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getImageUrl, formatDate } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { AdminProductActions } from "@/components/admin/AdminProductActions";
 import { BulkActivateButton } from "@/components/admin/BulkActivateButton";
 

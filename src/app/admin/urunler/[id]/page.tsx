@@ -11,7 +11,7 @@ interface Props { params: Promise<{ id: string }> }
 
 export default async function UrunEditPage({ params }: Props) {
   const { id } = await params;
-  const [product, categories] = await Promise.all([
+  const [productRaw, categories] = await Promise.all([
     prisma.product.findUnique({
       where: { id },
       include: { images: { orderBy: [{ isCover: "desc" }, { order: "asc" }] } },
@@ -23,7 +23,14 @@ export default async function UrunEditPage({ params }: Props) {
     }),
   ]);
 
-  if (!product) notFound();
+  if (!productRaw) notFound();
+
+  // Convert Decimal to number and specs to proper type
+  const product = {
+    ...productRaw,
+    price: productRaw.price ? Number(productRaw.price) : null,
+    specs: productRaw.specs as Record<string, string> | null,
+  };
 
   return (
     <div className="space-y-6">

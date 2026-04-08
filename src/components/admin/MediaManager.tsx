@@ -1,11 +1,23 @@
 "use client";
 import React, { useState, useRef, useTransition } from "react";
-import { Upload, Trash2, Copy, Check, Loader2, X } from "lucide-react";
+import { Upload, Trash2, Copy, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 interface Asset { id: string; url: string; filename: string; mimeType: string | null; size: number | null; createdAt: Date }
+
+interface UploadedFile {
+  url: string;
+  originalName: string;
+  size: number;
+}
+
+interface UploadResponse {
+  success?: boolean;
+  files?: UploadedFile[];
+  error?: string;
+}
 
 export function MediaManager({ initialAssets }: { initialAssets: Asset[] }) {
   const router = useRouter();
@@ -25,9 +37,9 @@ export function MediaManager({ initialAssets }: { initialAssets: Asset[] }) {
 
     try {
       const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
+      const data: UploadResponse = await res.json();
       if (data.files) {
-        const newAssets = data.files.map((f: any) => ({
+        const newAssets = data.files.map((f) => ({
           id: f.url, url: f.url, filename: f.originalName,
           mimeType: "image/webp", size: f.size, createdAt: new Date(),
         }));
@@ -47,7 +59,7 @@ export function MediaManager({ initialAssets }: { initialAssets: Asset[] }) {
   function toggleSelect(id: string) {
     setSelected((prev) => {
       const n = new Set(prev);
-      n.has(id) ? n.delete(id) : n.add(id);
+      if (n.has(id)) { n.delete(id); } else { n.add(id); }
       return n;
     });
   }
@@ -79,7 +91,7 @@ export function MediaManager({ initialAssets }: { initialAssets: Asset[] }) {
     });
   }
 
-  function formatSize(bytes: number | null) {
+  function _formatSize(bytes: number | null) {
     if (!bytes) return "—";
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;

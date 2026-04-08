@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, FolderOpen, FileText, Users,
-  Image as ImageIcon, ChevronDown, Menu, X, LogOut, AlignLeft,
+  Image as ImageIcon, ChevronDown, Menu, X, LogOut,
   Layers, SlidersHorizontal, ChevronRight, ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

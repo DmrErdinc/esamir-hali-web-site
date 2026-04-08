@@ -12,7 +12,7 @@ interface BlogCategory { id: string; name: string; slug: string; _count: { posts
 export function BlogCategoriesManager({ categories: initialCategories }: { categories: BlogCategory[] }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, _setCategories] = useState(initialCategories);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [newName, setNewName] = useState("");

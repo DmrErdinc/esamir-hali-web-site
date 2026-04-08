@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Plus, X, Upload } from "lucide-react";
+import { Loader2, X, Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,9 +14,40 @@ import { MediaPickerModal } from "@/components/admin/MediaPickerModal";
 
 interface Category { id: string; name: string; slug: string; parentId: string | null; }
 
+interface ProductImage {
+  url: string;
+  alt: string | null;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  shortDesc: string | null;
+  description: string | null;
+  material: string | null;
+  dimensions: string | null;
+  color: string | null;
+  sku: string | null;
+  price: number | null;
+  showPrice: boolean;
+  categoryId: string | null;
+  isActive: boolean;
+  isFeatured: boolean;
+  isNew: boolean;
+  inStock: boolean;
+  seoTitle: string | null;
+  seoDesc: string | null;
+  specs: Record<string, string> | null;
+  trendyolUrl: string | null;
+  hepsiburadaUrl: string | null;
+  shopierUrl: string | null;
+  images?: ProductImage[];
+}
+
 interface ProductFormProps {
   categories: Category[];
-  product?: any;
+  product?: Product;
 }
 
 export function ProductForm({ categories, product }: ProductFormProps) {
@@ -24,7 +55,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   const [isPending, startTransition] = useTransition();
   const [showMediaPicker, setShowMediaPicker] = useState(false);
   const [images, setImages] = useState<{ url: string; alt: string }[]>(
-    product?.images?.map((i: any) => ({ url: i.url, alt: i.alt || "" })) || []
+    product?.images?.map((i) => ({ url: i.url, alt: i.alt || "" })) || []
   );
 
   const [form, setForm] = useState({
@@ -46,6 +77,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     seoTitle: product?.seoTitle || "",
     seoDesc: product?.seoDesc || "",
     specs: product?.specs ? (typeof product.specs === 'string' ? product.specs : JSON.stringify(product.specs, null, 2)) : "",
+    trendyolUrl: product?.trendyolUrl || "",
+    hepsiburadaUrl: product?.hepsiburadaUrl || "",
+    shopierUrl: product?.shopierUrl || "",
   });
 
   function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -77,7 +111,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       if (form.specs && form.specs.trim()) {
         try {
           specsData = JSON.parse(form.specs);
-        } catch (err) {
+        } catch {
           toast.error("Ek Özellikler geçerli bir JSON formatında değil.");
           return;
         }
@@ -88,8 +122,8 @@ export function ProductForm({ categories, product }: ProductFormProps) {
 
       const data = { ...form, price: priceValue, images, specs: specsData };
       const res = product
-        ? await updateProduct(product.id, data) as any
-        : await createProduct(data) as any;
+        ? await updateProduct(product.id, data)
+        : await createProduct(data);
 
       if (res.error) {
         toast.error(res.error);
@@ -185,6 +219,42 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             <div className="space-y-2">
               <Label htmlFor="specs">Ek Özellikler (JSON)</Label>
               <Textarea id="specs" value={form.specs} onChange={(e) => setForm((f) => ({ ...f, specs: e.target.value }))} rows={3} placeholder='{"Düğüm/m²": "160.000", "Menşei": "İran"}' />
+            </div>
+          </div>
+
+          {/* E-commerce Platform Links */}
+          <div className="bg-white border border-gray-200 rounded-sm p-6 space-y-4">
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">E-Ticaret Platform Linkleri</h2>
+            <p className="text-xs text-gray-500">Ürününüzün diğer platformlardaki satış linklerini ekleyin. Müşteriler bu linklerden de alışveriş yapabilir.</p>
+            <div className="space-y-2">
+              <Label htmlFor="trendyolUrl">Trendyol Linki</Label>
+              <Input
+                id="trendyolUrl"
+                type="url"
+                value={form.trendyolUrl}
+                onChange={(e) => setForm((f) => ({ ...f, trendyolUrl: e.target.value }))}
+                placeholder="https://www.trendyol.com/..."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="hepsiburadaUrl">Hepsiburada Linki</Label>
+              <Input
+                id="hepsiburadaUrl"
+                type="url"
+                value={form.hepsiburadaUrl}
+                onChange={(e) => setForm((f) => ({ ...f, hepsiburadaUrl: e.target.value }))}
+                placeholder="https://www.hepsiburada.com/..."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="shopierUrl">Shopier Linki</Label>
+              <Input
+                id="shopierUrl"
+                type="url"
+                value={form.shopierUrl}
+                onChange={(e) => setForm((f) => ({ ...f, shopierUrl: e.target.value }))}
+                placeholder="https://www.shopier.com/..."
+              />
             </div>
           </div>
 

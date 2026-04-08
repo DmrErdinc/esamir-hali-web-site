@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  Package, FolderOpen, FileText, ImageIcon, Plus, ArrowRight,
-  Eye, Settings, TrendingUp, LayoutDashboard, Layers, Star,
+  Package, FolderOpen, FileText, ImageIcon, ArrowRight,
+  Eye, Settings, TrendingUp, LayoutDashboard, Layers,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -43,9 +43,9 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-6 w-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <LayoutDashboard className="h-5 w-5 text-gray-400" />
@@ -64,7 +64,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
           <Link
             key={s.label}
@@ -90,9 +90,9 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-5">
         <h2 className="text-sm font-semibold text-gray-900 mb-4">Hızlı Eylemler</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {quickActions.map((a) => (
             <Link
               key={a.label}
@@ -113,7 +113,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Recent activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
         {/* Recent Products */}
         <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-50">

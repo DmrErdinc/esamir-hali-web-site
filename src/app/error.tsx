@@ -3,7 +3,7 @@ import Link from "next/link";
 import { RefreshCw, ArrowLeft } from "lucide-react";
 
 export default function Error({
-  error,
+  error: _error,
   reset,
 }: {
   error: Error & { digest?: string };
